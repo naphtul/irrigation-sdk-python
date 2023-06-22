@@ -4,13 +4,15 @@ import requests
 
 
 class Hydrawise:
-    def __init__(self):
+    def __init__(self, api_key: str = ''):
         self.API_LOCATION = 'https://api.hydrawise.com/api/v1'
-        self.API_KEY = os.environ.get('HYDRAWISE_API_KEY')
+        self.api_key = api_key if api_key else os.environ.get('HYDRAWISE_API_KEY')
         self.zone_map = self._build_zone_map()
 
     def _request(self, path: str, params: dict) -> dict:
-        params['api_key'] = self.API_KEY
+        if not self.api_key:
+            raise ValueError('API Key param not properly defined.')
+        params['api_key'] = self.api_key
         res = {}
         try:
             res = requests.get(self.API_LOCATION + path, params=params).json()
@@ -46,3 +48,8 @@ class Hydrawise:
         path = '/setzone.php'
         params = dict(action='stop', relay_id=self.zone_map[zone_id])
         return self._request(path, params)
+
+
+if __name__ == '__main__':
+    hydrawise = Hydrawise('')
+    print(hydrawise.get_customer_details())

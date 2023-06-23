@@ -7,11 +7,11 @@ class Hydrawise:
     def __init__(self, api_key: str = ''):
         self.API_LOCATION = 'https://api.hydrawise.com/api/v1'
         self.api_key = api_key if api_key else os.environ.get('HYDRAWISE_API_KEY')
+        if not self.api_key:
+            raise ValueError('API Key param not properly defined.')
         self.zone_map = self._build_zone_map()
 
     def _request(self, path: str, params: dict) -> dict:
-        if not self.api_key:
-            raise ValueError('API Key param not properly defined.')
         params['api_key'] = self.api_key
         res = {}
         try:
